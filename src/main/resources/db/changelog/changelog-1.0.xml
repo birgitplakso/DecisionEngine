@@ -1,0 +1,43 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd ">
+
+<!-- ülemine osa on vajalik projekti alustamiseks, </databaseChangeLog> -->
+
+    <changeSet id="12.05.21" author="Birgit">
+
+        <createTable tableName="segments">
+            <column name="segment_name" type="text"/>
+            <column name="code_id" type="text">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="credit_modifier" type="integer"/>
+        </createTable>
+
+        <insert tableName="segments">
+            <column name="segment_name" value="dept"/>
+            <column name="code_id" value="49002010965"/>
+            <column name="credit_modifier" value="0"/>
+        </insert>
+        <insert tableName="segments">
+            <column name="segment_name" value="segment 1"/>
+            <column name="code_id" value="49002010976"/>
+            <column name="credit_modifier" value="100"/>
+        </insert>
+        <insert tableName="segments">
+            <column name="segment_name" value="segment 2"/>
+            <column name="code_id" value="49002010987"/>
+            <column name="credit_modifier" value="300"/>
+        </insert>
+        <insert tableName="segments">
+            <column name="segment_name" value="segment 3"/>
+            <column name="code_id" value="49002010998"/>
+            <column name="credit_modifier" value="1000"/>
+        </insert>
+
+    </changeSet>
+
+
+</databaseChangeLog>
