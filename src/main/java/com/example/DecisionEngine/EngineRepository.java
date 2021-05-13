@@ -14,7 +14,7 @@ public class EngineRepository {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
 
-    public int getCreditModifier(String code) {
+    public Integer getCreditModifier(String code) {
         String sql="SELECT credit_modifier FROM segments where code_id =:dbCodeId";
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("dbCodeId", code);

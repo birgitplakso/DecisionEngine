@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping
+@RequestMapping("api")
 @RestController
 public class EngineController {
 
@@ -17,7 +17,7 @@ public class EngineController {
 
     //POSTMAN teha-->
     @GetMapping("/loanDecision/{amount}/{months}/{code}")
-    public String getLoanDecision(@PathVariable("amount") double amount,
+    public LoanResponse getLoanDecision(@PathVariable("amount") double amount,
                                   @PathVariable("months") int months,
                                   @PathVariable("code") String code){
         return engineService.getLoanDecision(amount, months, code);

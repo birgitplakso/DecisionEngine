@@ -35,13 +35,16 @@ package com.example.DecisionEngine;
         As a result please provide working code with a single api endpoint. Include tests for code and a guide how to run code locally. Also whenever possible share your thought process. If you have any additional questions, then please feel free to ask them.*/
 
 import com.example.DecisionEngine.engineException.DecisionEngineException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 public class EngineService {
 
+    @Autowired
     private EngineRepository engineRepository;
+
+
 
 //    public static void main(String[] args) {
 //        System.out.println(getCreditScore(100,3000, 24));
@@ -50,45 +53,49 @@ public class EngineService {
 //    }
 
 
-    public String getLoanDecision(double amount, int months, String code) {
+    public LoanResponse getLoanDecision(double amount, int months, String code) {
+        //create new loan response object to be sent to front
+        LoanResponse loanResponse=new LoanResponse();
+        loanResponse.setEnteredAmount(amount);
+        loanResponse.setEnteredPeriod(months);
         //  get the credit_modifier from database
         int creditModifier=engineRepository.getCreditModifier(code);
         //  find the credit score of the customer
         double creditScore=getCreditScore(creditModifier, amount, months);
         // find maximum amount what is possible to get
-        int maxLoan=findMaxLoanAmount(creditModifier, months);
+
 
         //check if amount and time-period are valid   (min input 2000 €, max 10000; min/max loan period 12-60 months
         if(amount<2000||amount>10000 || months<12|| months>60){
             throw new DecisionEngineException("Insert valid amount and/or loan period");
-        }else if(creditModifier==0){
+        }else if(creditScore==0){
             throw new DecisionEngineException("Error, customer has dept, no amount of loan allowed");
-        }else if(creditModifier>=1) {
+        }else if(creditScore>=1) {
             //in case of modifier equal or bigger than 1 - 1)find max loan amount for requested period
-
-            return "For period "+months+" the maximum loan amount is "+maxLoan+" EUR";
+            int maxLoan=findMaxLoanAmount(creditModifier, months);
+            loanResponse.setProposedAmount(maxLoan);
+            return loanResponse;
         }else {
-            //in case of modifier less then 1:
-            // 1) find max sum what would be suitable for the customer
-
+            // 1) find max sum what would be suitable for the customer(was done before)
+            int maxLoan=findMaxLoanAmount(creditModifier, months);
+            loanResponse.setProposedAmount(maxLoan);
             // 2)find loan period that would meet the requested sum
             int suggestedLoanPeriod=findLoanPeriod(creditModifier,amount);
-
-            return "The maximum possible sum for period "+months+" months is "+maxLoan+" EUR \n"+
-                    "The shortest loan period for "+amount+" EUR is "+suggestedLoanPeriod+" EUR";
+            loanResponse.setProposedPeriod(suggestedLoanPeriod);
+            return loanResponse;
         }
     }
 
-    private static double getCreditScore(int creditModifier, double amount, int months){
+    private double getCreditScore(int creditModifier, double amount, int months){
         return  ( (double) creditModifier/ amount) * (double)months;
     }
 
-    private static int findMaxLoanAmount(int creditModifier, int months){
+    private int findMaxLoanAmount(int creditModifier, int months){
         //lowest credit score can be 1 -> Max amount=(creditModifier*months)/1
         int maxLoan=creditModifier*months;
         //check if max loan is in bounds:
         if(maxLoan<2000){
-            throw new DecisionEngineException("Error, not possible to give loan");
+            throw new DecisionEngineException("Error, maximum possible loan amount is below minimum output sum");
         }
         else if(maxLoan>2000 && maxLoan<=10000 ){
             return maxLoan;
@@ -97,12 +104,12 @@ public class EngineService {
         }
     }
 
-    private static int findLoanPeriod(int creditModifier, double amount){
-        //suitable period= amount * 1(lowest credit  score) / credit modifier
+    private int findLoanPeriod(int creditModifier, double amount){
+        //suitable period= amount * 1(lowest possible credit  score) / credit modifier
         int loanPeriod=(int)(amount)/creditModifier;
         //check if loan period is valid:
         if(loanPeriod>60){
-            throw new DecisionEngineException("Error, not possible to give loan");
+            throw new DecisionEngineException("Error, calculated period exceeds the maximum loan period");
         }else if(loanPeriod<12){
             return loanPeriod=12;
         }else{
