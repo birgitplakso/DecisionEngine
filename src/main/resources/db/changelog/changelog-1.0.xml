@@ -10,7 +10,7 @@
 
         <createTable tableName="segments">
             <column name="segment_name" type="text"/>
-            <column name="code_id" type="text">
+            <column name="code_id" type="varchar(32)">
                 <constraints primaryKey="true"/>
             </column>
             <column name="credit_modifier" type="integer"/>
