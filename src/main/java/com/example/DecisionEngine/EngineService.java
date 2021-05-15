@@ -95,12 +95,12 @@ public class EngineService {
         int maxLoan=creditModifier*months;
         //check if max loan is in bounds:
         if(maxLoan<2000){
-            throw new DecisionEngineException("Error, maximum possible loan amount is below minimum output sum");
+            return 0; // in front layer, need to use if statement if(response.getProposedAmount==0) - maximum loan for the entered period is below 2000EUR
         }
         else if(maxLoan>2000 && maxLoan<=10000 ){
             return maxLoan;
         }else{
-           return 10000;
+           return 10000; //we offer maximum allowed loan amount
         }
     }
 
@@ -109,9 +109,9 @@ public class EngineService {
         int loanPeriod=(int)(amount)/creditModifier;
         //check if loan period is valid:
         if(loanPeriod>60){
-            throw new DecisionEngineException("Error, calculated period exceeds the maximum loan period");
+            return 0; //in front layer we have to use if(response.getProposedPeriod== 0) - Calculated period exceeds the maximum allowed loan period
         }else if(loanPeriod<12){
-            return loanPeriod=12;
+            return 12; //we offer shortest possible loan period
         }else{
             return loanPeriod;
         }
