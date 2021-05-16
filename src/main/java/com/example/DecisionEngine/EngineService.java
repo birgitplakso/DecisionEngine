@@ -62,9 +62,6 @@ public class EngineService {
         int creditModifier=engineRepository.getCreditModifier(code);
         //  find the credit score of the customer
         double creditScore=getCreditScore(creditModifier, amount, months);
-        // find maximum amount what is possible to get
-
-
         //check if amount and time-period are valid   (min input 2000 €, max 10000; min/max loan period 12-60 months
         if(amount<2000||amount>10000 || months<12|| months>60){
             throw new DecisionEngineException("Insert valid amount and/or loan period");
@@ -74,6 +71,7 @@ public class EngineService {
             //in case of modifier equal or bigger than 1 - 1)find max loan amount for requested period
             int maxLoan=findMaxLoanAmount(creditModifier, months);
             loanResponse.setProposedAmount(maxLoan);
+            loanResponse.setProposedPeriod(months);
             return loanResponse;
         }else {
             // 1) find max sum what would be suitable for the customer(was done before)
@@ -95,7 +93,7 @@ public class EngineService {
         int maxLoan=creditModifier*months;
         //check if max loan is in bounds:
         if(maxLoan<2000){
-            return 0; // in front layer, need to use if statement if(response.getProposedAmount==0) - maximum loan for the entered period is below 2000EUR
+            return 0; // in front layer, need to use if statement if(response.proposedAmount==0) - maximum loan for the entered period is below 2000EUR
         }
         else if(maxLoan>2000 && maxLoan<=10000 ){
             return maxLoan;
@@ -109,7 +107,7 @@ public class EngineService {
         int loanPeriod=(int)(amount)/creditModifier;
         //check if loan period is valid:
         if(loanPeriod>60){
-            return 0; //in front layer we have to use if(response.getProposedPeriod== 0) - Calculated period exceeds the maximum allowed loan period
+            return 0; //in front layer we have to use if(response.proposedPeriod== 0) - Calculated period exceeds the maximum allowed loan period
         }else if(loanPeriod<12){
             return 12; //we offer shortest possible loan period
         }else{
