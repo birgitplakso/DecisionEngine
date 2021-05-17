@@ -44,20 +44,12 @@ public class EngineService {
     @Autowired
     private EngineRepository engineRepository;
 
-
-
-//    public static void main(String[] args) {
-//        System.out.println(getCreditScore(100,3000, 24));
-//
-//        System.out.println(findLoanPeriod(100,3000));
-//    }
-
-
     public LoanResponse getLoanDecision(double amount, int months, String code) {
         //create new loan response object to be sent to front
         LoanResponse loanResponse=new LoanResponse();
         loanResponse.setEnteredAmount(amount);
         loanResponse.setEnteredPeriod(months);
+
         //  get the credit_modifier from database
         int creditModifier=engineRepository.getCreditModifier(code);
         //  find the credit score of the customer
@@ -71,10 +63,11 @@ public class EngineService {
             //in case of modifier equal or bigger than 1 - 1)find max loan amount for requested period
             int maxLoan=findMaxLoanAmount(creditModifier, months);
             loanResponse.setProposedAmount(maxLoan);
+            //as customer is valid for loan we can propose the same period that the customer has entered
             loanResponse.setProposedPeriod(months);
             return loanResponse;
         }else {
-            // 1) find max sum what would be suitable for the customer(was done before)
+            // 1) find max sum what would be suitable for the customer
             int maxLoan=findMaxLoanAmount(creditModifier, months);
             loanResponse.setProposedAmount(maxLoan);
             // 2)find loan period that would meet the requested sum
