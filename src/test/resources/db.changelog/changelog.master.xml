@@ -5,7 +5,8 @@
         xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-    <include file="/db/changelog/changelog-1.0.yaml"/>
+    <include file="/db/changelog/changelog-1.0.xml"/>
+    <include file="/db/changelog/changelog-test.xml"/>
     <!--Add test-data.xml file to insert test data !
     test data is the same as for actual application: already hardcoded in liquibase changelog-1-->
 

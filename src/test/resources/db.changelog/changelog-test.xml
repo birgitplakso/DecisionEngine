@@ -6,7 +6,7 @@
 
 <!-- ülemine osa on vajalik projekti alustamiseks, </databaseChangeLog> -->
 
-    <changeSet id="12.05.21" author="Birgit">
+    <changeSet id="17.05.21" author="Birgit">
 
         <createTable tableName="segments">
             <column name="segment_name" type="text"/>
